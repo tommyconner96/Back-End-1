@@ -4,7 +4,7 @@ exports.up = async function (knex) {
     diners.string("username").notNullable().unique();
 
     diners.string("password").notNullable();
-    // diners.string("location").notNullable();
+    diners.string("location");
     // diners.string("favorite_trucks");
   });
 
@@ -13,7 +13,7 @@ exports.up = async function (knex) {
     operators.string("username").notNullable().unique();
 
     operators.string("password").notNullable();
-    // operators.string("password");
+    // operators.string("truck_owned");
   });
 };
 
