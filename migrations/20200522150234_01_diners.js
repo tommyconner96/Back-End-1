@@ -13,7 +13,7 @@ exports.up = async function (knex) {
     operators.string("username").notNullable().unique();
 
     operators.string("password").notNullable();
-    operators.string("password");
+    // operators.string("password");
   });
 };
 

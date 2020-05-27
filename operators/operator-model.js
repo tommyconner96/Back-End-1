@@ -8,10 +8,9 @@ function findById(id) {
   return db("operators").where({ id }).first();
 }
 
-function add(shout) {
-  return db("operators")
-    .insert(shout, "id")
-    .then(([id]) => findById(id));
+function add(operator) {
+  return db("foodtrucks").insert(operator, "id");
+  // .then(([id]) => findById(id));
 }
 
 function remove(id) {
