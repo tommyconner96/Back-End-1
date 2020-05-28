@@ -67,6 +67,78 @@ router.delete("/:id", validateUserId(), async (req, res, next) => {
   }
 });
 
+router.post("/trucks", async (req, res, next) => {
+  try {
+    const [id] = await db("trucks").insert(req.body);
+    const menu = await db("trucks").where({ id }).first();
+
+    res.status(201).json(menu);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.put("/trucks/:id", validateUserId(), async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await db("trucks").where({ id }).update(req.body);
+    const menu = await db("trucks").where({ id }).first();
+
+    res.json(menu);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete("/trucks/:id", validateUserId(), async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await db("trucks").where({ id }).del();
+
+    res.status(201).json({
+      message: `Truck ${id} deleted`,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post("/menus", async (req, res, next) => {
+  try {
+    const [id] = await db("menus").insert(req.body);
+    const menu = await db("menus").where({ id }).first();
+
+    res.status(201).json(menu);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.put("/menus/:id", validateUserId(), async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await db("menus").where({ id }).update(req.body);
+    const menu = await db("menus").where({ id }).first();
+
+    res.json(menu);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete("/menus/:id", validateUserId(), async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await db("menus").where({ id }).del();
+
+    res.status(201).json({
+      message: `Truck ${id} deleted`,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 function validateUserId() {
   return async (req, res, next) => {
     try {
