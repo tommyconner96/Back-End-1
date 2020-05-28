@@ -27,10 +27,10 @@ router.post("/login", async (req, res, next) => {
     const { username, password } = req.body;
     const user = await Operators.findBy({ username }).first();
     // hashing user password with time complexity of 14
-    // const hash = await bcrypt.hash(password, 14);
+    const hash = await bcrypt.hash(password, 14);
     const passwordValid = await bcrypt.compare(password, user.password);
-    // since bcrypt hashes generate different password due to the salting,
-    // we rely on magic internals to compare hashes rather than doing it manually
+    // // since bcrypt hashes generate different password due to the salting,
+    // // we rely on magic internals to compare hashes rather than doing it manually
 
     if (!user || !passwordValid) {
       return res.status(401).json({

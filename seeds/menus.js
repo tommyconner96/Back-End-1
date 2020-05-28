@@ -10,6 +10,11 @@ exports.seed = function (knex) {
           item_description: "Yummy",
           item_price: 11.99,
         },
+        {
+          item_name: "Vindaloo",
+          item_description: "Spicy Yummy",
+          item_price: 11.99,
+        },
       ]);
     });
 };
