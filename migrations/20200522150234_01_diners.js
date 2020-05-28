@@ -32,7 +32,11 @@ exports.up = async function (knex) {
     table.specificType("intarray", "customer_ratings_avg");
   });
 
-  // await knex("trucks").insert({ intarray: [] });
+  await knex("trucks").insert({
+    name: "food truck",
+    cuisine_type: "Italian",
+    intarray: [1, 2],
+  });
   // await knex('menus').insert({stringarray: [], intarray: []});
 
   await knex.schema.createTable("current_location", (table) => {
