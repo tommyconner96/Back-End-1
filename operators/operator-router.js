@@ -4,6 +4,7 @@ const db = require("../database/config");
 
 const router = express.Router();
 
+// WELCOME
 router.get("/", async (req, res, next) => {
   try {
     res.status(200).json({ message: "Welcome to the Operator route!" });
@@ -15,6 +16,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+// GET OPERATOR BY ID
 router.get("/:id", async (req, res, next) => {
   try {
     const operator = await db("operators").where("id", req.params.id).first();
@@ -31,6 +33,7 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
+// CREATE OPERATOR
 router.post("/", async (req, res, next) => {
   try {
     const [id] = await db("operators").insert(req.body);
@@ -42,6 +45,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+// UPDATE OPERATOR
 router.put("/:id", validateUserId(), async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -54,6 +58,7 @@ router.put("/:id", validateUserId(), async (req, res, next) => {
   }
 });
 
+// DELETE OPERATOR
 router.delete("/:id", validateUserId(), async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -67,9 +72,33 @@ router.delete("/:id", validateUserId(), async (req, res, next) => {
   }
 });
 
-router.get("/trucks/:id", async (req, res, next) => {
+// GET OPERATOR'S TRUCKS
+router.get("/:id/trucks", async (req, res, next) => {
   try {
-    const truck = await db("trucks").where("id", req.params.id).first();
+    const operatorTrucks = await db("trucks").where(
+      "operator_id",
+      req.params.id
+    );
+
+    if (!operatorTrucks) {
+      return res.status(404).json({
+        message: "No trucks found",
+      });
+    }
+
+    res.json(operatorTrucks);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET TRUCK BY ID
+router.get("/:id/trucks/:truck_id", async (req, res, next) => {
+  try {
+    const truck = await db("trucks")
+      .where("operator_id", req.params.id)
+      .andWhere("id", req.params.truck_id)
+      .first();
 
     if (!truck) {
       return res.status(404).json({
@@ -83,42 +112,58 @@ router.get("/trucks/:id", async (req, res, next) => {
   }
 });
 
-router.post("/trucks", async (req, res, next) => {
+// CREATE TRUCK
+router.post("/:id/trucks", async (req, res, next) => {
   try {
     const [id] = await db("trucks").insert(req.body);
-    const menu = await db("trucks").where({ id }).first();
+    const truck = await db("trucks").where({ id }).first();
 
-    res.status(201).json(menu);
+    res.status(201).json(truck);
   } catch (err) {
     next(err);
   }
 });
 
-router.put("/trucks/:id", validateUserId(), async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    await db("trucks").where({ id }).update(req.body);
-    const menu = await db("trucks").where({ id }).first();
+// UPDATE TRUCK
+router.put(
+  "/:id/trucks/:truck_id",
+  validateUserId(),
+  async (req, res, next) => {
+    try {
+      await db("trucks")
+        .where("id", req.params.truck_id)
+        .andWhere("operator_id", req.params.id)
+        .update(req.body);
+      const truck = await db("trucks").where("id", req.params.truck_id).first();
 
-    res.json(menu);
-  } catch (err) {
-    next(err);
+      res.json(truck);
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
-router.delete("/trucks/:id", validateUserId(), async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    await db("trucks").where({ id }).del();
+// DELETE TRUCK
+router.delete(
+  "/:id/trucks/:truck_id",
+  validateUserId(),
+  async (req, res, next) => {
+    try {
+      await db("trucks")
+        .where("id", req.params.truck_id)
+        .andWhere("operator_id", req.params.id)
+        .del();
 
-    res.status(201).json({
-      message: `Truck ${id} deleted`,
-    });
-  } catch (err) {
-    next(err);
+      res.status(201).json({
+        message: `Truck ${req.params.truck_id} deleted`,
+      });
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
+// GET TRUCK MENU
 router.get("/trucks/:id/menu", async (req, res, next) => {
   try {
     const menu = await db("menus").where("id", req.params.id).first();
@@ -135,6 +180,19 @@ router.get("/trucks/:id/menu", async (req, res, next) => {
   }
 });
 
+// ADD MENU
+router.post("/trucks/:id/menu", async (req, res, next) => {
+  try {
+    const [id] = await db("menus").insert(req.body);
+    const menu = await db("menus").where({ id }).first();
+
+    res.status(201).json(menu);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET MENU ITEM
 router.get("/trucks/:id/menu/:item_id", async (req, res, next) => {
   try {
     const menuItem = await db("menus").where("id", req.params.item_id).first();
@@ -151,17 +209,7 @@ router.get("/trucks/:id/menu/:item_id", async (req, res, next) => {
   }
 });
 
-router.post("/trucks/:id/menu", async (req, res, next) => {
-  try {
-    const [id] = await db("menus").insert(req.body);
-    const menu = await db("menus").where({ id }).first();
-
-    res.status(201).json(menu);
-  } catch (err) {
-    next(err);
-  }
-});
-
+// UPDATE MENU ITEM
 router.put(
   "/trucks/:id/menu/:item_id",
   validateUserId(),
@@ -178,6 +226,7 @@ router.put(
   }
 );
 
+// DELETE MENU ITEM
 router.delete(
   "/trucks/:id/menu/:item_id",
   validateUserId(),
@@ -187,7 +236,55 @@ router.delete(
       await db("menus").where({ item_id }).del();
 
       res.status(201).json({
-        message: `Menu item ${id} deleted`,
+        message: `Menu item ${item_.id.item_name} deleted`,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// ADD TRUCK LOCATION
+router.post("/trucks/:id/location", async (req, res, next) => {
+  try {
+    const [id] = await db("diners").insert(req.body);
+    const diner = await db("diners").where({ id }).first();
+
+    res.status(201).json(diner);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// vERIFY THESE ROUTES ARE WORKING CORRECTLY
+// UPDATE TRUCK LOCATION
+router.put(
+  "/trucks/:id/location/:location_id",
+  validateUserId(),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      await db("diners").where({ id }).update(req.body);
+      const diner = await db("diners").where({ id }).first();
+
+      res.json(diner);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// DELETE TRUCK LOCATION
+router.delete(
+  "/trucks/:id/location/:location_id",
+  validateUserId(),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      await db("diners").where({ id }).del();
+
+      res.status(201).json({
+        message: `Diner ${id} deleted`,
       });
     } catch (err) {
       next(err);
