@@ -16,7 +16,9 @@ function findBy(filter) {
 async function add(operator) {
   // hash password with time complexity of 10
   operator.password = await bcrypt.hash(operator.password, 2);
+  console.log(operator);
   const [id] = await db("operators").insert(operator);
+  console.log(id);
   return findBy(id);
 }
 

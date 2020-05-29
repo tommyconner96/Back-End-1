@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post("/register", async (req, res, next) => {
   try {
-    const { username } = req.body;
+    const { username, password } = req.body;
     const user = await Operators.findBy({ username }).first();
 
     if (user) {

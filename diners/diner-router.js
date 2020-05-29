@@ -2,7 +2,7 @@ const express = require("express");
 const db = require("../database/config");
 // const Diners = require("./diner-model");
 
-const router = express.Router();
+const router = express.Router({mergeParams: true});
 
 router.get("/", async (req, res, next) => {
   try {

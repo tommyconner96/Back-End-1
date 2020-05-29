@@ -3,7 +3,7 @@ const db = require("../database/config");
 const { authenticate } = require("../middleware/authenticate");
 // const Operators = require("./operator-model");
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 // WELCOME
 router.get("/", async (req, res, next) => {
@@ -33,18 +33,6 @@ router.get("/:id", authenticate(), async (req, res, next) => {
     next(err);
   }
 });
-
-// // CREATE OPERATOR
-// router.post("/", async (req, res, next) => {
-//   try {
-//     const [id] = await db("operators").insert(req.body);
-//     const operator = await db("operators").where({ id }).first();
-
-//     res.status(201).json(operator);
-//   } catch (err) {
-//     next(err);
-//   }
-// });
 
 // UPDATE OPERATOR
 router.put("/:id", validateUserId(), async (req, res, next) => {

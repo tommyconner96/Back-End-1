@@ -34,9 +34,9 @@ server.use(
 
 server.use("/", welcomeRouter);
 server.use("/diners", dinerRouter);
-server.use("/diners", dinerAuthRouter);
-server.use("/operators/auth", operatorAuthRouter);
+server.use("/diners/auth", dinerAuthRouter);
 server.use("/operators", operatorRouter);
+server.use("/operators/auth", operatorAuthRouter);
 
 server.use((err, req, res, next) => {
   console.log(err);
