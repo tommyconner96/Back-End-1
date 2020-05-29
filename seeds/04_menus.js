@@ -6,14 +6,16 @@ exports.seed = function (knex) {
       // Inserts seed entries
       return knex("menus").insert([
         {
-          item_name: "Tikka Masala",
-          item_description: "Yummy",
-          item_price: 11.99,
+          truck_id: 1,
+          name: "Taj Mahal",
         },
         {
-          item_name: "Vindaloo",
-          item_description: "Spicy Yummy",
-          item_price: 11.99,
+          truck_id: 2,
+          name: "Il Saporis",
+        },
+        {
+          truck_id: 3,
+          name: "Pueblo Viejo",
         },
       ]);
     });

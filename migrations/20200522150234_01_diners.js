@@ -4,48 +4,62 @@ exports.up = async function (knex) {
     table.string("username").notNullable().unique();
     table.string("password").notNullable();
     table.string("location");
-    // table.specificType("favorites", "text ARRAY");
+    table.string("favorite_trucks");
   });
 
   await knex.schema.createTable("operators", (table) => {
     table.increments("id");
     table.string("username").notNullable().unique();
     table.string("password").notNullable();
-    // table.specificType("truck_id", "integer ARRAY");
+    table.string("trucks_owned");
   });
 
   await knex.schema.createTable("trucks", (table) => {
     table.increments("id");
-    table.string("name").notNullable();
-    table.string("cuisine_type").notNullable();
-    table.integer("customer_rating");
     table
       .integer("operator_id")
       .references("id")
       .inTable("operators")
       .onDelete("SET NULL");
-    // table.specificType("menu_id", "INT []");
+    table.string("name").notNullable();
+    table.string("image URL");
+    table.string("cuisine_type").notNullable();
+    table.integer("customer_rating");
+    table.integer("customer_ratings_avg");
+    table.string("menu");
   });
 
   await knex.schema.createTable("menus", (table) => {
+    table.increments("id");
     table
       .integer("truck_id")
       .references("id")
       .inTable("trucks")
       .onDelete("SET NULL");
+    table.string("name").notNullable();
+    // THIS OPERATOR_ID SHOULD BE RETURNED IN THE QUERY
+    // table
+    //   .integer("operator_id")
+    //   .notNullable()
+    //   .references("id")
+    //   .inTable("operators")
+    //   .onDelete("SET NULL");
+    table.string("menu_items");
+  });
+
+  await knex.schema.createTable("menu_items", (table) => {
+    table.increments("id");
     table
-      .integer("operator_id")
-      .notNullable()
+      .integer("menu_id")
       .references("id")
-      .inTable("operators")
+      .inTable("menus")
       .onDelete("SET NULL");
     table.string("item_name").notNullable();
     table.string("item_description").notNullable();
     table.float("item_price").notNullable();
-    table.specificType("stringarray", "item_photos");
+    table.string("item_photo_URL");
     table.float("customer_ratings");
-    table.primary(["truck_id", "operator_id"]);
-    // table.specificType("intarray", "customer_ratings_avg");
+    table.float("customer_rating_avg");
   });
 
   await knex.schema.createTable("current_location", (table) => {
@@ -62,6 +76,7 @@ exports.up = async function (knex) {
 
 exports.down = async function (knex) {
   await knex.schema.dropTableIfExists("current_location");
+  await knex.schema.dropTableIfExists("menu_items");
   await knex.schema.dropTableIfExists("menus");
   await knex.schema.dropTableIfExists("trucks");
   await knex.schema.dropTableIfExists("operators");

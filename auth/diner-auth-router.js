@@ -5,6 +5,7 @@ const { sessions, authenticate } = require("../middleware/authenticate");
 
 const router = express.Router();
 
+// REGISTER DINER
 router.post("/register", async (req, res, next) => {
   try {
     const { username } = req.body;
@@ -15,18 +16,19 @@ router.post("/register", async (req, res, next) => {
         message: "Username is already taken",
       });
     }
-
+    console.log(req.body);
     res.status(201).json(await Diners.add(req.body));
   } catch (err) {
     next(err);
   }
 });
 
+// LOGIN DINER
 router.post("/login", async (req, res, next) => {
   try {
     const { username, password } = req.body;
     const user = await Diners.findBy({ username }).first();
-
+    console.log(req.body);
     const passwordValid = await bcrypt.compare(password, user.password);
 
     if (!user || !passwordValid) {
@@ -35,16 +37,17 @@ router.post("/login", async (req, res, next) => {
       });
     }
 
-    req.session.diner = diner;
+    req.session.user = user;
 
     res.json({
-      message: `Welcome ${diner.username}!`,
+      message: `Welcome ${user.username}!`,
     });
   } catch (err) {
     next(err);
   }
 });
 
+// LOGOUT
 router.get("/logout", authenticate(), (req, res, next) => {
   req.session.destroy((err) => {
     if (err) {

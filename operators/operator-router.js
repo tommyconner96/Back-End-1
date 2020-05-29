@@ -1,8 +1,8 @@
 const express = require("express");
 const db = require("../database/config");
-// const Operators = require("./operator-model");
+const { authenticate } = require("../middleware/authenticate");
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 // WELCOME
 router.get("/", async (req, res, next) => {
@@ -17,7 +17,7 @@ router.get("/", async (req, res, next) => {
 });
 
 // GET OPERATOR BY ID
-router.get("/:id", async (req, res, next) => {
+router.get("/:id", authenticate(), async (req, res, next) => {
   try {
     const operator = await db("operators").where("id", req.params.id).first();
 
@@ -33,20 +33,8 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-// CREATE OPERATOR
-router.post("/", async (req, res, next) => {
-  try {
-    const [id] = await db("operators").insert(req.body);
-    const operator = await db("operators").where({ id }).first();
-
-    res.status(201).json(operator);
-  } catch (err) {
-    next(err);
-  }
-});
-
 // UPDATE OPERATOR
-router.put("/:id", validateUserId(), async (req, res, next) => {
+router.put("/:id", authenticate(), async (req, res, next) => {
   try {
     const { id } = req.params;
     await db("operators").where({ id }).update(req.body);
@@ -59,7 +47,7 @@ router.put("/:id", validateUserId(), async (req, res, next) => {
 });
 
 // DELETE OPERATOR
-router.delete("/:id", validateUserId(), async (req, res, next) => {
+router.delete("/:id", authenticate(), async (req, res, next) => {
   try {
     const { id } = req.params;
     await db("operators").where({ id }).del();
@@ -73,7 +61,7 @@ router.delete("/:id", validateUserId(), async (req, res, next) => {
 });
 
 // GET OPERATOR'S TRUCKS
-router.get("/:id/trucks", async (req, res, next) => {
+router.get("/:id/trucks", authenticate(), async (req, res, next) => {
   try {
     const operatorTrucks = await db("trucks").where(
       "operator_id",
@@ -93,7 +81,7 @@ router.get("/:id/trucks", async (req, res, next) => {
 });
 
 // GET TRUCK BY ID
-router.get("/:id/trucks/:truck_id", async (req, res, next) => {
+router.get("/:id/trucks/:truck_id", authenticate(), async (req, res, next) => {
   try {
     const truck = await db("trucks")
       .where("operator_id", req.params.id)
@@ -113,7 +101,7 @@ router.get("/:id/trucks/:truck_id", async (req, res, next) => {
 });
 
 // CREATE TRUCK
-router.post("/:id/trucks", async (req, res, next) => {
+router.post("/:id/trucks", authenticate(), async (req, res, next) => {
   try {
     const [id] = await db("trucks").insert(req.body);
     const truck = await db("trucks").where({ id }).first();
@@ -125,28 +113,24 @@ router.post("/:id/trucks", async (req, res, next) => {
 });
 
 // UPDATE TRUCK
-router.put(
-  "/:id/trucks/:truck_id",
-  validateUserId(),
-  async (req, res, next) => {
-    try {
-      await db("trucks")
-        .where("id", req.params.truck_id)
-        .andWhere("operator_id", req.params.id)
-        .update(req.body);
-      const truck = await db("trucks").where("id", req.params.truck_id).first();
+router.put("/:id/trucks/:truck_id", authenticate(), async (req, res, next) => {
+  try {
+    await db("trucks")
+      .where("id", req.params.truck_id)
+      .andWhere("operator_id", req.params.id)
+      .update(req.body);
+    const truck = await db("trucks").where("id", req.params.truck_id).first();
 
-      res.json(truck);
-    } catch (err) {
-      next(err);
-    }
+    res.json(truck);
+  } catch (err) {
+    next(err);
   }
-);
+});
 
 // DELETE TRUCK
 router.delete(
   "/:id/trucks/:truck_id",
-  validateUserId(),
+  authenticate(),
   async (req, res, next) => {
     try {
       await db("trucks")
@@ -256,7 +240,7 @@ router.post("/trucks/:id/location", async (req, res, next) => {
   }
 });
 
-// vERIFY THESE ROUTES ARE WORKING CORRECTLY
+// VERIFY THESE ROUTES ARE WORKING CORRECTLY
 // UPDATE TRUCK LOCATION
 router.put(
   "/trucks/:id/location/:location_id",

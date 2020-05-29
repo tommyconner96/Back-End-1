@@ -5,9 +5,10 @@ const { sessions, authenticate } = require("../middleware/authenticate");
 
 const router = express.Router();
 
+// REGISTER OPERATOR
 router.post("/register", async (req, res, next) => {
   try {
-    const { username } = req.body;
+    const { username, password } = req.body;
     const user = await Operators.findBy({ username }).first();
 
     if (user) {
@@ -15,22 +16,19 @@ router.post("/register", async (req, res, next) => {
         message: "Username is already taken",
       });
     }
-
+    console.log(req.body);
     res.status(201).json(await Operators.add(req.body));
   } catch (err) {
     next(err);
   }
 });
 
+// LOGIN OPERATOR
 router.post("/login", async (req, res, next) => {
   try {
     const { username, password } = req.body;
     const user = await Operators.findBy({ username }).first();
-    // hashing user password with time complexity of 14
-    const hash = await bcrypt.hash(password, 14);
     const passwordValid = await bcrypt.compare(password, user.password);
-    // // since bcrypt hashes generate different password due to the salting,
-    // // we rely on magic internals to compare hashes rather than doing it manually
 
     if (!user || !passwordValid) {
       return res.status(401).json({
@@ -38,22 +36,17 @@ router.post("/login", async (req, res, next) => {
       });
     }
 
-    // const authToken = Math.random();
-    // sessions[authToken] = user.id;
-
-    // // res.setHeader("Authorization", authToken);
-    // res.setHeader("Set-Cookie", `token=${authToken}; Path=/; HttpOnly`);
-
-    req.session.operator = operator;
+    req.session.user = user;
 
     res.json({
-      message: `Welcome ${operator.username}!`,
+      message: `Welcome ${user.username}!`,
     });
   } catch (err) {
     next(err);
   }
 });
 
+// LOGOUT
 router.get("/logout", authenticate(), (req, res, next) => {
   req.session.destroy((err) => {
     if (err) {

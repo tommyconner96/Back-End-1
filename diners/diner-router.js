@@ -1,8 +1,8 @@
 const express = require("express");
 const db = require("../database/config");
-// const Diners = require("./diner-model");
+const { authenticate } = require("../middleware/authenticate");
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router.get("/", async (req, res, next) => {
   try {
@@ -15,7 +15,8 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/:id", async (req, res, next) => {
+// GET DINER BY ID
+router.get("/:id", authenticate(), async (req, res, next) => {
   try {
     const diner = await db("diners").where("id", req.params.id).first();
 
@@ -31,18 +32,8 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
-  try {
-    const [id] = await db("diners").insert(req.body);
-    const diner = await db("diners").where({ id }).first();
-
-    res.status(201).json(diner);
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.put("/:id", validateUserId(), async (req, res, next) => {
+// UPDATE DINER
+router.put("/:id", authenticate(), async (req, res, next) => {
   try {
     const { id } = req.params;
     await db("diners").where({ id }).update(req.body);
@@ -54,7 +45,8 @@ router.put("/:id", validateUserId(), async (req, res, next) => {
   }
 });
 
-router.delete("/:id", validateUserId(), async (req, res, next) => {
+// DELETE DINER
+router.delete("/:id", authenticate(), async (req, res, next) => {
   try {
     const { id } = req.params;
     await db("diners").where({ id }).del();
@@ -66,25 +58,5 @@ router.delete("/:id", validateUserId(), async (req, res, next) => {
     next(err);
   }
 });
-
-function validateUserId() {
-  return async (req, res, next) => {
-    try {
-      const { id } = req.params;
-      const diner = await db("diners").where({ id }).first();
-
-      if (!diner) {
-        return res.status(404).json({
-          message: "Diner not found",
-        });
-      }
-
-      req.diner = diner;
-      next();
-    } catch (err) {
-      next(err);
-    }
-  };
-}
 
 module.exports = router;
