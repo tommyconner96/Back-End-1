@@ -5,6 +5,7 @@ const { sessions, authenticate } = require("../middleware/authenticate");
 
 const router = express.Router();
 
+// REGISTER DINER
 router.post("/register", async (req, res, next) => {
   try {
     const { username } = req.body;
@@ -22,6 +23,7 @@ router.post("/register", async (req, res, next) => {
   }
 });
 
+// LOGIN DINER
 router.post("/login", async (req, res, next) => {
   try {
     const { username, password } = req.body;
@@ -45,6 +47,7 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
+// LOGOUT
 router.get("/logout", authenticate(), (req, res, next) => {
   req.session.destroy((err) => {
     if (err) {
