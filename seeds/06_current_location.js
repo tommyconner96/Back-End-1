@@ -5,9 +5,9 @@ exports.seed = function (knex) {
     .then(function () {
       // Inserts seed entries
       return knex("current_location").insert([
-        { location: "San Francisco, CA" },
-        { location: "New York, NY" },
-        { location: "Austin, TX" },
+        { truck_id: 1, location: "San Francisco, CA" },
+        { truck_id: 2, location: "New York, NY" },
+        { truck_id: 3, location: "Austin, TX" },
       ]);
     });
 };

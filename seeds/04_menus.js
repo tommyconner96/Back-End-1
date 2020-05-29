@@ -6,15 +6,15 @@ exports.seed = function (knex) {
       // Inserts seed entries
       return knex("menus").insert([
         {
-          // truck_id: 1,
+          truck_id: 1,
           name: "Taj Mahal",
         },
         {
-          // truck_id: 2,
+          truck_id: 2,
           name: "Il Saporis",
         },
         {
-          // truck_id: 3,
+          truck_id: 3,
           name: "Pueblo Viejo",
         },
       ]);
