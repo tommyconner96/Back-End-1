@@ -19,7 +19,7 @@ async function add(operator) {
   console.log(operator);
   const [id] = await db("operators").insert(operator);
   console.log(id);
-  return findBy(id);
+  return findBy({ id });
 }
 
 // function add(operator) {

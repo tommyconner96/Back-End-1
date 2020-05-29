@@ -35,10 +35,10 @@ router.post("/login", async (req, res, next) => {
       });
     }
 
-    req.session.diner = diner;
+    req.session.user = user;
 
     res.json({
-      message: `Welcome ${diner.username}!`,
+      message: `Welcome ${user.username}!`,
     });
   } catch (err) {
     next(err);
