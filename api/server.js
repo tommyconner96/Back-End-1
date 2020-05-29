@@ -17,17 +17,16 @@ server.use(helmet());
 server.use(express.json());
 server.use(
   session({
-    name: "token", // overwrites default cookie name, hides our stack better
-    resave: false, // avoid recreating sessions if they haven't changed
-    saveUninitialized: false, // GDPR laws against setting cookies automatically
-    secret: process.env.COOKIE_SECRET || "secret", // cryptographically sign the cookie
+    name: "token",
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.COOKIE_SECRET || "secret",
     cookie: {
-      httpOnly: true, // disallow JS to read cookie content
-      //   maxAge: 60 * 1000, // expires the cookie after 60 seconds
+      httpOnly: true,
     },
     store: new KnexSessionStore({
-      createTable: true, // if the session table doesn't exist, create automatically
-      knex: dbConfig, // configured instance of knex
+      createTable: true,
+      knex: dbConfig,
     }),
   })
 );
