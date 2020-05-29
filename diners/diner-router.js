@@ -15,6 +15,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+// GET DINER BY ID
 router.get("/:id", async (req, res, next) => {
   try {
     const diner = await db("diners").where("id", req.params.id).first();
@@ -31,6 +32,7 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
+// CREATE DINER
 router.post("/", async (req, res, next) => {
   try {
     const [id] = await db("diners").insert(req.body);
@@ -42,6 +44,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+// UPDATE DINER
 router.put("/:id", validateUserId(), async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -54,6 +57,7 @@ router.put("/:id", validateUserId(), async (req, res, next) => {
   }
 });
 
+// DELETE DINER
 router.delete("/:id", validateUserId(), async (req, res, next) => {
   try {
     const { id } = req.params;

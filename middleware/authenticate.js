@@ -1,3 +1,6 @@
+const bcrypt = require("bcryptjs");
+const Operators = require("../operators/operator-model");
+
 const sessions = {};
 
 function authenticate() {

@@ -1,5 +1,6 @@
 const express = require("express");
 const db = require("../database/config");
+const { authenticate } = require("../middleware/authenticate");
 // const Operators = require("./operator-model");
 
 const router = express.Router();
@@ -17,7 +18,7 @@ router.get("/", async (req, res, next) => {
 });
 
 // GET OPERATOR BY ID
-router.get("/:id", async (req, res, next) => {
+router.get("/:id", authenticate(), async (req, res, next) => {
   try {
     const operator = await db("operators").where("id", req.params.id).first();
 
@@ -33,17 +34,17 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-// CREATE OPERATOR
-router.post("/", async (req, res, next) => {
-  try {
-    const [id] = await db("operators").insert(req.body);
-    const operator = await db("operators").where({ id }).first();
+// // CREATE OPERATOR
+// router.post("/", async (req, res, next) => {
+//   try {
+//     const [id] = await db("operators").insert(req.body);
+//     const operator = await db("operators").where({ id }).first();
 
-    res.status(201).json(operator);
-  } catch (err) {
-    next(err);
-  }
-});
+//     res.status(201).json(operator);
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
 // UPDATE OPERATOR
 router.put("/:id", validateUserId(), async (req, res, next) => {

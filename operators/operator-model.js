@@ -5,13 +5,17 @@ function find() {
   return db("operators");
 }
 
-function findBy(id) {
-  return db("operators").where({ id }).first();
+// function findBy(id) {
+//   return db("operators").where({ id }).first();
+// }
+
+function findBy(filter) {
+  return db("operators").select("id", "username", "password").where(filter);
 }
 
 async function add(operator) {
   // hash password with time complexity of 10
-  //   operator.password = await bcrypt.hash(operator.password, 2);
+  operator.password = await bcrypt.hash(operator.password, 2);
   const [id] = await db("operators").insert(operator);
   return findBy(id);
 }
