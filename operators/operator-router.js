@@ -1,9 +1,8 @@
 const express = require("express");
 const db = require("../database/config");
 const { authenticate } = require("../middleware/authenticate");
-// const Operators = require("./operator-model");
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 // WELCOME
 router.get("/", async (req, res, next) => {
@@ -34,20 +33,8 @@ router.get("/:id", authenticate(), async (req, res, next) => {
   }
 });
 
-// // CREATE OPERATOR
-// router.post("/", async (req, res, next) => {
-//   try {
-//     const [id] = await db("operators").insert(req.body);
-//     const operator = await db("operators").where({ id }).first();
-
-//     res.status(201).json(operator);
-//   } catch (err) {
-//     next(err);
-//   }
-// });
-
 // UPDATE OPERATOR
-router.put("/:id", validateUserId(), async (req, res, next) => {
+router.put("/:id", authenticate(), async (req, res, next) => {
   try {
     const { id } = req.params;
     await db("operators").where({ id }).update(req.body);
@@ -60,7 +47,7 @@ router.put("/:id", validateUserId(), async (req, res, next) => {
 });
 
 // DELETE OPERATOR
-router.delete("/:id", validateUserId(), async (req, res, next) => {
+router.delete("/:id", authenticate(), async (req, res, next) => {
   try {
     const { id } = req.params;
     await db("operators").where({ id }).del();
@@ -74,62 +61,70 @@ router.delete("/:id", validateUserId(), async (req, res, next) => {
 });
 
 // GET OPERATOR'S TRUCKS
-router.get("/:id/trucks", async (req, res, next) => {
-  try {
-    const operatorTrucks = await db("trucks").where(
-      "operator_id",
-      req.params.id
-    );
+router.get(
+  "/:id/trucks",
+  /*authenticate()*/ async (req, res, next) => {
+    try {
+      const operatorTrucks = await db("trucks").where(
+        "operator_id",
+        req.params.id
+      );
 
-    if (!operatorTrucks) {
-      return res.status(404).json({
-        message: "No trucks found",
-      });
+      if (!operatorTrucks) {
+        return res.status(404).json({
+          message: "No trucks found",
+        });
+      }
+
+      res.json(operatorTrucks);
+    } catch (err) {
+      next(err);
     }
-
-    res.json(operatorTrucks);
-  } catch (err) {
-    next(err);
   }
-});
+);
 
 // GET TRUCK BY ID
-router.get("/:id/trucks/:truck_id", async (req, res, next) => {
-  try {
-    const truck = await db("trucks")
-      .where("operator_id", req.params.id)
-      .andWhere("id", req.params.truck_id)
-      .first();
+router.get(
+  "/:id/trucks/:truck_id",
+  /*authenticate()*/ async (req, res, next) => {
+    try {
+      const truck = await db("trucks")
+        .where("operator_id", req.params.id)
+        .andWhere("id", req.params.truck_id)
+        .first();
 
-    if (!truck) {
-      return res.status(404).json({
-        message: "Truck not found",
-      });
+      if (!truck) {
+        return res.status(404).json({
+          message: "Truck not found",
+        });
+      }
+
+      res.json(truck);
+    } catch (err) {
+      next(err);
     }
-
-    res.json(truck);
-  } catch (err) {
-    next(err);
   }
-});
+);
 
 // CREATE TRUCK
-router.post("/:id/trucks", async (req, res, next) => {
-  try {
-    const [id] = await db("trucks").insert(req.body);
-    const truck = await db("trucks").where({ id }).first();
+router.post(
+  "/:id/trucks",
+  /*authenticate()*/ async (req, res, next) => {
+    try {
+      const [id] = await db("trucks").insert(req.body);
+      const truck = await db("trucks").where({ id }).first();
 
-    res.status(201).json(truck);
-  } catch (err) {
-    next(err);
+      res.status(201).json(truck);
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 // UPDATE TRUCK
 router.put(
   "/:id/trucks/:truck_id",
-  validateUserId(),
-  async (req, res, next) => {
+  /*authenticate()*/ async (req, res, next) => {
     try {
       await db("trucks")
         .where("id", req.params.truck_id)
@@ -147,7 +142,7 @@ router.put(
 // DELETE TRUCK
 router.delete(
   "/:id/trucks/:truck_id",
-  validateUserId(),
+  /*authenticate()*/
   async (req, res, next) => {
     try {
       await db("trucks")
@@ -257,7 +252,7 @@ router.post("/trucks/:id/location", async (req, res, next) => {
   }
 });
 
-// vERIFY THESE ROUTES ARE WORKING CORRECTLY
+// VERIFY THESE ROUTES ARE WORKING CORRECTLY
 // UPDATE TRUCK LOCATION
 router.put(
   "/trucks/:id/location/:location_id",
