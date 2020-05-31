@@ -61,24 +61,27 @@ router.delete("/:id", authenticate(), async (req, res, next) => {
 });
 
 // GET OPERATOR'S TRUCKS
-router.get("/:id/trucks", authenticate(), async (req, res, next) => {
-  try {
-    const operatorTrucks = await db("trucks").where(
-      "operator_id",
-      req.params.id
-    );
+router.get(
+  "/:id/trucks",
+  /*authenticate()*/ async (req, res, next) => {
+    try {
+      const operatorTrucks = await db("trucks").where(
+        "operator_id",
+        req.params.id
+      );
 
-    if (!operatorTrucks) {
-      return res.status(404).json({
-        message: "No trucks found",
-      });
+      if (!operatorTrucks) {
+        return res.status(404).json({
+          message: "No trucks found",
+        });
+      }
+
+      res.json(operatorTrucks);
+    } catch (err) {
+      next(err);
     }
-
-    res.json(operatorTrucks);
-  } catch (err) {
-    next(err);
   }
-});
+);
 
 // GET TRUCK BY ID
 router.get(
