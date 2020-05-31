@@ -7,7 +7,7 @@ router.get("/", async (req, res, next) => {
     res.status(200).json({ message: "Welcome to FoodTruck TrakR!" });
   } catch (err) {
     res.status(500).json({
-      message: "Something went wrong",
+      message: "Something went wrong with this route",
     });
     next(err);
   }
