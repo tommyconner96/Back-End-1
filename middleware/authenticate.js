@@ -7,7 +7,8 @@ function authenticate() {
 
   return async (req, res, next) => {
     try {
-      if (!req.session || !req.session.user) {
+      // FE having auth issues so maybe try checking for a token?
+      if (!req.body.password || !req.session.user) {
         return res.status(401).json(authError);
       }
       next();
