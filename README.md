@@ -2,10 +2,17 @@
 
 ## Endpoints
 
-- welcome https://food-truck-back-end.herokuapp.com/
-- diners https://food-truck-back-end.herokuapp.com/diners
-- operators https://food-truck-back-end.herokuapp.com/operators
-- trucks https://food-truck-back-end.herokuapp.com/operators/:id/trucks
-- menus https://food-truck-back-end.herokuapp.com/operators/menus
+- welcome https://food-truck-back-end.herokuapp.com
 
-To view different users/trucks/menus, add an **/:id** to an endpoint i.e. **https://food-truck-back-end.herokuapp.com/operators/2**
+## TO REGISTER/LOGIN/LOGOUT
+
+- diners: /diners/auth/(action_name)
+- operators: /operators/auth/(action_name)
+
+## CRUD OPERATIONS
+
+- diners: getDinerById, updateDiner, deleteDiner ==> /diners/:id
+- operators: getOperatorById, updateOperator, deleteOperator ==> /operators/:id
+- trucks getOperatorsTrucks, addTruck ==> /operators/:id/trucks
+  getTruckById, updateTruck, deleteTruck ==> /operators/:id/trucks/:truck_id
+- more endpoints coming soon...
