@@ -61,7 +61,7 @@ router.delete("/:id", authenticate(), async (req, res, next) => {
 });
 
 // GET OPERATOR'S TRUCKS
-router.get("/:id/trucks", authenticate(), async (req, res, next) => {
+router.get("/:id/trucks", /*authenticate(),*/ async (req, res, next) => {
   try {
     const operatorTrucks = await db("trucks").where(
       "operator_id",
@@ -81,7 +81,7 @@ router.get("/:id/trucks", authenticate(), async (req, res, next) => {
 });
 
 // GET TRUCK BY ID
-router.get("/:id/trucks/:truck_id", authenticate(), async (req, res, next) => {
+router.get("/:id/trucks/:truck_id", /*authenticate(),*/ async (req, res, next) => {
   try {
     const truck = await db("trucks")
       .where("operator_id", req.params.id)
@@ -101,7 +101,7 @@ router.get("/:id/trucks/:truck_id", authenticate(), async (req, res, next) => {
 });
 
 // CREATE TRUCK
-router.post("/:id/trucks", authenticate(), async (req, res, next) => {
+router.post("/:id/trucks", /*authenticate(),*/ async (req, res, next) => {
   try {
     const [id] = await db("trucks").insert(req.body);
     const truck = await db("trucks").where({ id }).first();
@@ -113,7 +113,7 @@ router.post("/:id/trucks", authenticate(), async (req, res, next) => {
 });
 
 // UPDATE TRUCK
-router.put("/:id/trucks/:truck_id", authenticate(), async (req, res, next) => {
+router.put("/:id/trucks/:truck_id", /*authenticate(),*/ async (req, res, next) => {
   try {
     await db("trucks")
       .where("id", req.params.truck_id)
@@ -130,7 +130,7 @@ router.put("/:id/trucks/:truck_id", authenticate(), async (req, res, next) => {
 // DELETE TRUCK
 router.delete(
   "/:id/trucks/:truck_id",
-  authenticate(),
+  /*authenticate(),*/
   async (req, res, next) => {
     try {
       await db("trucks")
