@@ -1,8 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
-const session = require("express-session");
-const KnexSessionStore = require("connect-session-knex")(session);
+// const session = require("express-session");
+// const KnexSessionStore = require("connect-session-knex")(session);
+const cookieParser = require("cookie-parser");
 const welcomeRouter = require("../welcome/welcome-router");
 const dinerRouter = require("../diners/diner-router");
 const dinerAuthRouter = require("../auth/diner-auth-router");
@@ -15,21 +16,22 @@ const server = express();
 server.use(cors());
 server.use(helmet());
 server.use(express.json());
-server.use(
-  session({
-    name: "token",
-    resave: false,
-    saveUninitialized: false,
-    secret: process.env.COOKIE_SECRET || "secret",
-    cookie: {
-      httpOnly: true,
-    },
-    store: new KnexSessionStore({
-      createTable: true,
-      knex: dbConfig,
-    }),
-  })
-);
+server.use(cookieParser());
+// server.use(
+//   session({
+//     name: "token",
+//     resave: false,
+//     saveUninitialized: false,
+//     secret: process.env.COOKIE_SECRET || "secret",
+//     cookie: {
+//       httpOnly: true,
+//     },
+//     store: new KnexSessionStore({
+//       createTable: true,
+//       knex: dbConfig,
+//     }),
+//   })
+// );
 
 server.use("/", welcomeRouter);
 server.use("/diners", dinerRouter);
