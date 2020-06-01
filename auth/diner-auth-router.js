@@ -1,7 +1,8 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const Diners = require("../diners/diner-model");
-const { sessions, authenticate } = require("../middleware/authenticate");
+const authenticate = require("../middleware/authenticate");
 
 const router = express.Router();
 
@@ -37,7 +38,7 @@ router.post("/login", async (req, res, next) => {
       });
     }
 
-    req.session.user = user;
+    // req.session.user = user;
 
     res.json({
       message: `Welcome ${user.username}!`,

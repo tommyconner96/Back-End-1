@@ -1,6 +1,6 @@
 const express = require("express");
 const db = require("../database/config");
-const { authenticate } = require("../middleware/authenticate");
+const authenticate = require("../middleware/authenticate");
 
 const router = express.Router({ mergeParams: true });
 

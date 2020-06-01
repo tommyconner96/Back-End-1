@@ -1,7 +1,8 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const Operators = require("../operators/operator-model");
-const { sessions, authenticate } = require("../middleware/authenticate");
+const authenticate = require("../middleware/authenticate");
 
 const router = express.Router();
 
@@ -36,8 +37,13 @@ router.post("/login", async (req, res, next) => {
       });
     }
 
-    req.session.user = user;
+    // req.session.user = user;
 
+    const tokenPayload = {
+      id: user.id,
+      username: user.username,
+    };
+    res.cookie("token", jwt.sign(tokenPayload, process.env.JWT_SECRET));
     res.json({
       message: `Welcome ${user.username}!`,
     });
