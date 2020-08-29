@@ -17,7 +17,7 @@ router.post("/register", async (req, res, next) => {
         message: "Username is already taken",
       });
     }
-    console.log(req.body);
+    // console.log(req.body);
     res.status(201).json(await Diners.add(req.body));
   } catch (err) {
     next(err);
@@ -29,7 +29,7 @@ router.post("/login", async (req, res, next) => {
   try {
     const { username, password } = req.body;
     const user = await Diners.findBy({ username }).first();
-    console.log(req.body);
+    // console.log(req.body);
     const passwordValid = await bcrypt.compare(password, user.password);
 
     if (!user || !passwordValid) {
@@ -41,7 +41,7 @@ router.post("/login", async (req, res, next) => {
     // req.session.user = user;
 
     res.json({
-      message: `Welcome ${user.username}!`,
+      message: `Welcome ${user.username}!`, user_id: user.id
     });
   } catch (err) {
     next(err);
