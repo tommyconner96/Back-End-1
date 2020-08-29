@@ -38,10 +38,11 @@ router.post("/login", async (req, res, next) => {
       });
     }
 
-    // req.session.user = user;
+    const token = createToken(user)
 
+    res.cookie("token", token)
     res.json({
-      message: `Welcome ${user.username}!`, user_id: user.id
+      message: `Welcome ${user.username}! have a token:`, token, user_id: user.id
     });
   } catch (err) {
     next(err);
@@ -60,5 +61,18 @@ router.get("/logout", authenticate(), (req, res, next) => {
     }
   });
 });
+
+function createToken(user) {
+	const payload = {
+		username: user.username,
+		id: user.id,
+	}
+	const secret = process.env.JWT_SECRET
+
+	const options = {
+		expiresIn: '1d',
+	}
+	return jwt.sign(payload, secret, options)
+}
 
 module.exports = router;
